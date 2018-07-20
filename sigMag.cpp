@@ -40,6 +40,18 @@ int sigMag::toVal() const{
     }
     return isNeg() ? -num : num;
 }
+sigMag sigMag::operator+(const sigMag& r) const{
+  return (toVal()+r.toVal());
+}
+sigMag sigMag::operator-(const sigMag& r) const{
+  return (toVal()-r.toVal());
+}
+sigMag sigMag::operator*(const sigMag& r) const{
+  return (toVal()*r.toVal());
+}
+sigMag sigMag::operator/(const sigMag& r) const{
+  return (toVal()/r.toVal());
+}
 std::ostream& operator<<(std::ostream& os, const sigMag& s){
     return os << s.getBin() << ' ' << s.toVal();
 }

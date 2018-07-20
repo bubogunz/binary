@@ -39,6 +39,18 @@ int twosComp::toVal() const{
   }
   return num;
 }
+twosComp twosComp::operator+(const twosComp& r) const{
+  return (toVal()+r.toVal());
+}
+twosComp twosComp::operator-(const twosComp& r) const{
+  return (toVal()+r.toVal());
+}
+twosComp twosComp::operator*(const twosComp& r) const{
+  return (toVal()+r.toVal());
+}
+twosComp twosComp::operator/(const twosComp& r) const{
+  return (toVal()+r.toVal());
+}
 std::ostream& operator<<(std::ostream& os, const twosComp& s){
     return os << s.getBin() << ' ' <<s.toVal();
 }

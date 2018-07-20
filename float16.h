@@ -9,14 +9,18 @@ class float16: public floatP{
   int sumExp(const binary&, int =0, int =4, int =5) const;
   static int* min(int&, int&);
   static int* max(int&, int&);
-  static char buildStr(double&, int);
-  static char buildStr(int&, int);
+  char buildStr(double&, int) const;
+  char buildStr(int&, int) const;
 public:
     float16(std::string ="0000000000000000");
     float16(const char*);
     float16(double);
     double toVal() const;
+    void round(binary&, double&, double) const;
     float16 operator+(const float16&) const;
+    float16 operator-(const float16&) const;
+    float16 operator*(const float16&) const;
+    float16 operator/(const float16&) const;
 };
 std::ostream& operator<<(std::ostream&, const float16&);
 #endif // FLOAT16_H

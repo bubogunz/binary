@@ -11,6 +11,10 @@ public:
   sigMag(const char*);
   sigMag(int);
   int toVal() const;
+  sigMag operator+(const sigMag&) const;
+  sigMag operator-(const sigMag&) const;
+  sigMag operator*(const sigMag&) const;
+  sigMag operator/(const sigMag&) const;
 };
 std::ostream& operator<<(std::ostream&, const sigMag&); //os.str() ritorna cio' che contiene lo stream sotto forma di stringa
 #endif // SIGNUM_H

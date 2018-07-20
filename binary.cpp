@@ -58,7 +58,8 @@ binary& binary::operator++(int){
           carry = false;
         }
       }else
-        {if(carry) b[i] = '0';}
+        if(carry)
+          b[i] = '0';
     }
   }
   return *this;

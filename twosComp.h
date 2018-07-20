@@ -10,6 +10,10 @@ public:
   twosComp(const char*);
   twosComp(int);
   int toVal() const;
+  twosComp operator+(const twosComp&) const;
+  twosComp operator-(const twosComp&) const;
+  twosComp operator*(const twosComp&) const;
+  twosComp operator/(const twosComp&) const;
 };
 std::ostream& operator<<(std::ostream&, const twosComp&);
 #endif // TWOSCOMP_H

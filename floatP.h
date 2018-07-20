@@ -8,6 +8,7 @@ public:
   floatP(std::string ="0000000000000000");
   floatP(const char*);
   virtual double toVal() const =0;
+  virtual void round(binary&, double&, double) const =0;
 };
 #endif // FLOATP_H
 

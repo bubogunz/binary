@@ -9,8 +9,9 @@
 using namespace std;
 
 int main(){
-  float16 z = pow(2,-24);
+  float16 z = pow(2,-5);
   cout << z << endl;
-  z = 0.00056894564654;
-  cout << z << endl;
+  float16 f = -0.00056894564654;
+  cout << f << endl;
+  cout << z/f << endl;
 }
