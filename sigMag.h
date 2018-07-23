@@ -10,6 +10,7 @@ class sigMag : public integer { //[-32767, +32767]
   void twosComp(sigMag&) const;
   void plus(sigMag&, sigMag) const;
   void discord(sigMag&, sigMag) const;
+  bool checkSign(bool o1, bool o2) const;
 public:
   sigMag(std::string ="");
   sigMag(const char*);

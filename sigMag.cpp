@@ -1,5 +1,5 @@
 #include "sigMag.h"
-#include "ofEx.h"
+#include "opEx.h"
 #include <math.h>
 #include <iostream>
 using namespace std;
@@ -37,22 +37,6 @@ void sigMag::toBin(int x){ // O(1)
       setBin(res);
       break;
   }
-}
-void sigMag::plus(sigMag& res, sigMag x) const{
-  auto it1 = res.end()-1;
-  auto it2 = x.end()-1;
-  bool of = false;
-  for(; it1!=res.begin(); --it1, --it2){
-    sigMag tmp(res.begin(),it1+1);
-    if((*it2) == '1'){
-        try { ++tmp; }
-        catch(ofEx){ of = true; }
-        res.replace(res.begin(),res.begin()+tmp.length(),
-                  tmp.begin(),tmp.end());
-    }
-  }
-  if(of)
-    throw ofEx();
 }
 int sigMag::toVal() const{
     int i = 14;
@@ -138,6 +122,22 @@ sigMag& sigMag::operator++(){
     throw ofEx();
   return *this;
 }
+void sigMag::plus(sigMag& res, sigMag x) const{
+  auto it1 = res.end()-1;
+  auto it2 = x.end()-1;
+  bool of = false;
+  for(; it1!=res.begin(); --it1, --it2){
+    sigMag tmp(res.begin(),it1+1);
+    if((*it2) == '1'){
+        try { ++tmp; }
+        catch(ofEx){ of = true; }
+        res.replace(res.begin(),res.begin()+tmp.length(),
+                  tmp.begin(),tmp.end());
+    }
+  }
+  if(of)
+    throw ofEx();
+}
 void sigMag::discord(sigMag& x, sigMag y) const{
   twosComp(y);
   y[0] = '1';
@@ -150,6 +150,15 @@ void sigMag::discord(sigMag& x, sigMag y) const{
     x.complement();
     --x;
   }
+}
+bool sigMag::checkSign(bool o1, bool o2) const{
+  if(!o1)
+    if(o2)
+      return true;
+    return false;
+  if(o2)
+    return false;
+  return true;
 }
 sigMag sigMag::operator+(const sigMag& r) const{
   const sigMag& x = *this;
@@ -221,27 +230,27 @@ sigMag sigMag::operator*(const sigMag& r) const{
       if(checkOf.find('1')!=std::string::npos)
         throw ofEx();
       b.erase(b.begin(), x);
-      //cout << "buffer=" << b << '(' << b.length() << ')' << endl;
       sigMag buffer(b);
       res = res + buffer;
-      //cout << "res + buffer= " << res + buffer << endl;
     }
   }
-  if(!isNeg()){
-    if(r.isNeg())
-      res[0] = '1';
-    else
-      res[0] = '0';
-  }else{
-    if(r.isNeg())
-      res[0] = '0';
-    else
-      res[0] = '1';
-  }
+  if(checkSign(isNeg(),r.isNeg()))
+    res[0] = '1';
   return res;
 }
 sigMag sigMag::operator/(const sigMag& r) const{
-  return (toVal()/r.toVal());
+  if(r==sigMag::zero) throw zeroEx();
+  sigMag x = *this, y = r;
+  x[0] = '0'; y[0] = '0';
+  int i = 0;
+  while(x>=y){
+    x = x - y;
+    ++i;
+  }
+  sigMag res(i);
+  if(checkSign(isNeg(),r.isNeg()))
+    res[0] = '1';
+  return res;
 }
 std::ostream& operator<<(std::ostream& os, const sigMag& s){
     return os << s.getBin() << ' ' << s.toVal();

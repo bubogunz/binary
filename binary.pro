@@ -5,9 +5,7 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     twosComp.cpp \
-    ofEx.cpp \
     floatP.cpp \
-    ufEx.cpp \
     integer.cpp \
     binary.cpp \
     float16.cpp \
@@ -21,4 +19,6 @@ HEADERS += \
     ufEx.h \
     integer.h \
     float16.h \
-    sigMag.h
+    sigMag.h \
+    zeroex.h \
+    opEx.h

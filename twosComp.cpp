@@ -1,5 +1,5 @@
 #include "twosComp.h"
-#include "ofEx.h"
+#include "opEx.h"
 #include <math.h>
 int twosComp::min = -32768;
 int twosComp::max = 32767;
@@ -54,13 +54,13 @@ twosComp twosComp::operator+(const twosComp& r) const{
   return (toVal()+r.toVal());
 }
 twosComp twosComp::operator-(const twosComp& r) const{
-  return (toVal()+r.toVal());
+  return (toVal()-r.toVal());
 }
 twosComp twosComp::operator*(const twosComp& r) const{
-  return (toVal()+r.toVal());
+  return (toVal()*r.toVal());
 }
 twosComp twosComp::operator/(const twosComp& r) const{
-  return (toVal()+r.toVal());
+  return (toVal()/r.toVal());
 }
 std::ostream& operator<<(std::ostream& os, const twosComp& s){
     return os << s.getBin() << ' ' <<s.toVal();

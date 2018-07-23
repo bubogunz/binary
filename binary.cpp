@@ -1,5 +1,5 @@
 #include "binary.h"
-#include "ofEx.h"
+#include "opEx.h"
 binary::binary(std::string s): std::string(s) { }
 binary::binary(const char* s): std::string(s) { }
 binary::binary(const binary& s): std::string(s) { }

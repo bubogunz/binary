@@ -1,6 +1,5 @@
 #include "float16.h"
-#include "ufEx.h"
-#include "ofEx.h"
+#include "opEx.h"
 #include <math.h>
 double float16::OF = 65504;
 double float16::UF = pow(2,-24);
