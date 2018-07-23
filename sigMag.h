@@ -5,12 +5,19 @@
 class sigMag : public integer { //[-32767, +32767]
   static int min;
   static int max;
+  static sigMag zero;
   void toBin(int);
+  void twosComp(sigMag&) const;
+  void plus(sigMag&, sigMag) const;
+  void discord(sigMag&, sigMag) const;
 public:
-  sigMag(std::string ="0000000000000000");
+  sigMag(std::string ="");
   sigMag(const char*);
   sigMag(int);
+  sigMag(std::string::const_iterator, std::string::const_iterator);
   int toVal() const;
+  sigMag& operator++();
+  sigMag& operator--();
   sigMag operator+(const sigMag&) const;
   sigMag operator-(const sigMag&) const;
   sigMag operator*(const sigMag&) const;

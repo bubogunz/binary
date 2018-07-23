@@ -7,15 +7,17 @@ public:
   binary(std::string ="");
   binary(const char*);
   binary(const binary&);
+  binary(std::string::const_iterator,std::string::const_iterator);
   binary getBin() const;
   void setBin(const std::string&);
   bool isNeg() const;
   void popZeroFront();
   void pushZeroBack(int);
-  binary complement() const;
+  void complement();
   void append(char);
   void append(const char*);
   void append(std::string);
-  binary& operator++(int);
+  virtual binary& operator--();
+  virtual binary& operator++();
 };
 #endif // BINARY_H

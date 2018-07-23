@@ -8,6 +8,7 @@ protected:
 public:
   integer(std::string ="0000000000000000");
   integer(const char*);
+  integer(std::string::const_iterator, std::string::const_iterator);
   virtual int toVal() const =0;
  };
 #endif // INTEGER_H

@@ -1,8 +1,10 @@
 #include "binary.h"
-#include <algorithm>
+#include "ofEx.h"
 binary::binary(std::string s): std::string(s) { }
 binary::binary(const char* s): std::string(s) { }
 binary::binary(const binary& s): std::string(s) { }
+binary::binary(std::string::const_iterator first, std::string::const_iterator last):
+        std::string(first,last) { }
 binary binary::getBin() const{
   return *this;
 }
@@ -36,31 +38,33 @@ void binary::append(const char* c){
 void binary::append(std::string s){
   *this += s;
 }
-binary binary::complement() const{
-  binary res;
-  std::for_each(begin(),end(),[&res](char c){
-      c == '1' ? res.append('0')
-               : res.append('1');
-  });
-  return res;
+void binary::complement(){
+  unsigned int i = 0;
+  for(;i<this->length(); ++i)
+      (*this)[i] == '1' ? (*this)[i] = '0'
+                        : (*this)[i] = '1';
 }
-binary& binary::operator++(int){
-  binary& b = *this;
-  if(b[length()-1]=='0')
-    b[length()-1] = '1';
-  else{
-    b[length()-1] = '0';
-    bool carry = true;
-    for(int i=length()-2; (i>=0) || carry; --i){
-      if(b[i]=='0'){
-        if(carry){
-          b[i] = '1';
-          carry = false;
-        }
+binary& binary::operator--(){
+  bool carry = true; binary& x = *this;
+    for(int i=length()-1; i>=0 && carry; --i){
+      if(x[i] == '1'){
+        x[i] = '0';
+        carry = false;
       }else
-        if(carry)
-          b[i] = '0';
+        x[i] = '1';
     }
-  }
+  if(carry) throw ofEx();
+  return *this;
+}
+binary& binary::operator++(){
+  bool carry = true; binary& x = *this;
+    for(int i=length()-1; i>=0 && carry; --i){
+      if(x[i] == '0'){
+        x[i] = '1';
+        carry = false;
+      }else
+        x[i] = '0';
+    }
+  if(carry) throw ofEx();
   return *this;
 }

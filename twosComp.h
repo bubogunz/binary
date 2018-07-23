@@ -11,6 +11,7 @@ public:
   twosComp(int);
   int toVal() const;
   twosComp operator+(const twosComp&) const;
+  //twosComp& operator++(int);
   twosComp operator-(const twosComp&) const;
   twosComp operator*(const twosComp&) const;
   twosComp operator/(const twosComp&) const;

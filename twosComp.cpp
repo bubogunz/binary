@@ -9,21 +9,25 @@ twosComp::twosComp(int i){
   toBin(i);
 }
 void twosComp::toBin(int x){
-  if(!x) setBin("0000000000000000");
-  else{
-    if(x<twosComp::min || x>twosComp::max) throw ofEx();
-    int i = 15;
-    binary res;
-    if(x<0){
-      x += pow(2,i);
-      res.append('1');
-    }else res.append('0');
-    i--;
-    while(i>=0){
-      res.append(buildStr(x,i));
-      --i;
-    }
-    setBin(res);
+  switch(x){
+    case 0:
+      setBin("0000000000000000");
+      break;
+    default:
+      if(x<twosComp::min || x>twosComp::max) throw ofEx();
+      int i = 15;
+      binary res;
+      if(x<0){
+        x += pow(2,i);
+        res.append('1');
+      }else res.append('0');
+      i--;
+      while(i>=0){
+        res.append(buildStr(x,i));
+        --i;
+      }
+      setBin(res);
+      break;
   }
 }
 int twosComp::toVal() const{
@@ -39,6 +43,13 @@ int twosComp::toVal() const{
   }
   return num;
 }
+/*twosComp& twosComp::operator++(int){
+  bool carry = true; twosComp& x = *this;
+  switch(x[0]){
+    case '0':
+
+  }
+}*/
 twosComp twosComp::operator+(const twosComp& r) const{
   return (toVal()+r.toVal());
 }

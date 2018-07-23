@@ -28,7 +28,7 @@ char float16::buildStr(int& x, int j) const{
 }
 void float16::round(binary& res, double& x, double z) const{
   while(z<2*x){
-    res++;
+    ++res;
     x -= z;
   }
 }
@@ -42,7 +42,7 @@ void float16::toBin(double x){
       x = x*(-1);
       neg = true;
     }
-    binary res;
+    float16 res;
     int e = 0, i = 15;
     while(!e && i>=-14){
       double y = pow(2,i);
