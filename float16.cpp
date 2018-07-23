@@ -4,6 +4,7 @@
 double float16::OF = 65504;
 double float16::UF = pow(2,-24);
 int float16::bias = 15;
+float16 float16::zero = "0000000000000000";
 float16::float16(std::string b): floatP(b){ }
 float16::float16(const char* s): floatP(s){ }
 float16::float16(double d) {
@@ -25,14 +26,14 @@ char float16::buildStr(int& x, int j) const{
   }
   return '0';
 }
-void float16::round(binary& res, double& x, double z) const{
+void float16::round(floatP& res, double& x, double z) const{
   while(z<2*x){
     ++res;
     x -= z;
   }
 }
 void float16::toBin(double x){
-  if(!x) setBin("0000000000000000");
+  if(!x) setBin(zero);
   else{
     if(x>float16::OF || x<-(float16::OF)) throw ofEx();
     if(x>float16::UF && x<-(float16::UF)) throw ufEx();
@@ -42,7 +43,7 @@ void float16::toBin(double x){
       neg = true;
     }
     float16 res;
-    int e = 0, i = 15;
+    int e = 0, i = length()-1;
     while(!e && i>=-14){
       double y = pow(2,i);
       if(x>=y){

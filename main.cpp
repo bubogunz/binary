@@ -12,10 +12,7 @@
 using namespace std;
 
 int main(){
-  sigMag f = 32767;
-  try {
-    cout << f/2 << endl;
-  }
-  catch(ofEx){ cout << "overflow" << endl;}
-  catch(zeroEx) {cout << "division per zero occurred" << endl; }
+  float16 f(89.089237429387423);
+  float16 g(-89.089237429387423);
+  cout << f << endl << g << endl;
  }
