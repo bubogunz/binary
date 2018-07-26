@@ -14,11 +14,8 @@ SOURCES += main.cpp \
 HEADERS += \
     binary.h \
     twosComp.h \
-    ofEx.h \
     floatP.h \
-    ufEx.h \
     integer.h \
     float16.h \
     sigMag.h \
-    zeroex.h \
     opEx.h

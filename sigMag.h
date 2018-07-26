@@ -19,10 +19,14 @@ public:
   int toVal() const;
   sigMag& operator++();
   sigMag& operator--();
-  sigMag operator+(const sigMag&) const;
-  sigMag operator-(const sigMag&) const;
-  sigMag operator*(const sigMag&) const;
-  sigMag operator/(const sigMag&) const;
+  bool operator<(const sigMag& r) const;
+  bool operator>(const sigMag& r) const;
+  bool operator<=(const sigMag& r) const;
+  bool operator>=(const sigMag& r) const;
+  sigMag& operator+(const binary&);
+  sigMag& operator-(const binary&);
+  sigMag& operator*(const binary&);
+  sigMag& operator/(const binary&);
 };
 std::ostream& operator<<(std::ostream&, const sigMag&); //os.str() ritorna cio' che contiene lo stream sotto forma di stringa
-#endif // SIGNUM_H
+#endif // SIGMAG_H
