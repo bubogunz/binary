@@ -10,7 +10,8 @@
 using namespace std;
 
 int main(){
-  sigMag x = "1101101110111000", y="0000000010101010";
-  cout << x << ' ' << y << endl;
-  cout << x/y << endl;
+  twosComp x = -32760, y="0000000010101010";
+  //cout << x << ;
+  for(int i=0; i<10; ++i)
+    cout << --x << endl;
 }

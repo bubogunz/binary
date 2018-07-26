@@ -1,8 +1,10 @@
 #include "twosComp.h"
 #include "opEx.h"
 #include <math.h>
-int twosComp::min = -32768;
-int twosComp::max = 32767;
+int twosComp::minV = -32768;
+int twosComp::maxV = 32767;
+twosComp twosComp::minB = "1000000000000000";
+twosComp twosComp::maxB = "0111111111111111";
 twosComp twosComp::zero = "0000000000000000";
 twosComp::twosComp(std::string s): integer(s){ }
 twosComp::twosComp(const char* s): integer(s){ }
@@ -15,8 +17,8 @@ void twosComp::toBin(int x){
       setBin(zero);
       break;
     default:
-      if(x<twosComp::min || x>twosComp::max) throw ofEx();
-      int i = 15;
+      if(x<twosComp::minV || x>twosComp::maxV) throw ofEx();
+      int i = zero.length()-1;
       twosComp res;
       if(x<0){
         x += pow(2,i);
@@ -45,24 +47,46 @@ int twosComp::toVal() const{
   }
   return num;
 }
-/*twosComp& twosComp::operator++(int){
+twosComp& twosComp::operator++(){
   bool carry = true; twosComp& x = *this;
-  switch(x[0]){
-    case '0':
-
+  if(x==maxB) throw ofEx();
+  for(int i=length()-1; i>0 && carry; --i){
+    if(x[i] == '0'){
+      x[i] = '1';
+      carry = false;
+     }else
+      x[i] = '0';
   }
-}*/
-twosComp twosComp::operator+(const twosComp& r) const{
-  return (toVal()+r.toVal());
+  if(carry && x[0] == '1')
+    return *this = zero;
+  if(carry)
+    throw ofEx();
+  return *this;
 }
-twosComp twosComp::operator-(const twosComp& r) const{
-  return (toVal()-r.toVal());
+twosComp& twosComp::operator--(){
+  bool carry = true; twosComp& x = *this;
+  if(x==minB) throw ofEx();
+  for(int i=length()-1; i>=0 && carry; --i){
+    if(x[i] == '1'){
+      x[i] = '0';
+      carry = false;
+    }else{
+      x[i] = '1';
+    }
+  }
+ return *this;
 }
-twosComp twosComp::operator*(const twosComp& r) const{
-  return (toVal()*r.toVal());
+twosComp& twosComp::operator+(const binary& r){
+  return zero;
 }
-twosComp twosComp::operator/(const twosComp& r) const{
-  return (toVal()/r.toVal());
+twosComp& twosComp::operator-(const binary& r){
+  return zero;
+}
+twosComp& twosComp::operator*(const binary& r){
+  return zero;
+}
+twosComp& twosComp::operator/(const binary& r) {
+  return zero;
 }
 std::ostream& operator<<(std::ostream& os, const twosComp& s){
     return os << s.getBin() << ' ' <<s.toVal();

@@ -1,8 +1,10 @@
 #include "sigMag.h"
 #include "opEx.h"
 #include <math.h>
-int sigMag::min = -32767;
-int sigMag::max = 32767;
+int sigMag::minV = -32767;
+int sigMag::maxV = 32767;
+sigMag sigMag::minB = "1111111111111111";
+sigMag sigMag::maxB = "0111111111111111";
 sigMag sigMag::zero = "0000000000000000";
 sigMag::sigMag(std::string s): integer(s) {
    toVal();
@@ -21,7 +23,7 @@ void sigMag::toBin(int x){ // O(1)
       setBin(sigMag::zero);
       break;
     default:
-      if(x<sigMag::min || x>sigMag::max) throw ofEx();
+      if(x<sigMag::minV || x>sigMag::maxV) throw ofEx();
       sigMag res;
       if(x<0){
         res.append('1');

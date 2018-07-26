@@ -3,8 +3,10 @@
 #include "integer.h"
 #include <string> //include Qstring e sul .pro QT += core
 class sigMag : public integer { //[-32767, +32767]
-  static int min;
-  static int max;
+  static int minV;
+  static int maxV;
+  static sigMag minB;
+  static sigMag maxB;
   static sigMag zero;
   void toBin(int);
   void twosComp(sigMag&) const;
