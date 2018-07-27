@@ -6,12 +6,8 @@ int sigMag::maxV = 32767;
 sigMag sigMag::minB = "1111111111111111";
 sigMag sigMag::maxB = "0111111111111111";
 sigMag sigMag::zero = "0000000000000000";
-sigMag::sigMag(std::string s): integer(s) {
-   toVal();
-}
-sigMag::sigMag(const char* s): integer(s) {
-   toVal();
-}
+sigMag::sigMag(std::string s): integer(s) { }
+sigMag::sigMag(const char* s): integer(s) { }
 sigMag::sigMag(int i){
   toBin(i);
 }
@@ -20,7 +16,7 @@ sigMag::sigMag(std::string::const_iterator first, std::string::const_iterator la
 void sigMag::toBin(int x){ // O(1)
   switch(x){
     case 0:
-      setBin(sigMag::zero);
+      *this = zero;
       break;
     default:
       if(x<sigMag::minV || x>sigMag::maxV) throw ofEx();
@@ -34,14 +30,14 @@ void sigMag::toBin(int x){ // O(1)
           res.append(buildStr(x,i));
           i--;
       }
-      setBin(res);
+      *this = res;
       break;
   }
 }
 int sigMag::toVal() const{
     int i = length()-2;
     int num = 0;
-    binary b = getBin();
+    const sigMag& b = *this;
     while(i>=0){
         if(b[length()-1-i] == '1')
             num += pow(2,i);
@@ -204,8 +200,8 @@ bool sigMag::operator>=(const sigMag& r) const{
 sigMag& sigMag::operator+(const binary& r) {
   sigMag& x = *this;
   sigMag res = *this;
-  if(res!=sigMag::zero){
-    if(r!=sigMag::zero){
+  if(res!=zero){
+    if(r!=zero){
       sigMag op = r;
       switch(x[0]){
         case '0':{

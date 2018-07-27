@@ -33,7 +33,7 @@ void float16::round(floatP& res, double& x, double z) const{
   }
 }
 void float16::toBin(double x){
-  if(!x) setBin(zero);
+  if(!x) *this = zero;
   else{
     if(x>float16::OF || x<-(float16::OF)) throw ofEx();
     if(x>float16::UF && x<-(float16::UF)) throw ufEx();
@@ -77,7 +77,7 @@ void float16::toBin(double x){
     round(res,x,z);
     res.insert(0,exp);
     neg ? res.insert(0,"1") : res.insert(0,"0");
-    setBin(res);
+    *this = res;
   }
 }
 double float16::toVal() const{

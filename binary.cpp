@@ -25,9 +25,6 @@ void binary::pushZeroBack(int length){
     i++;
   }
 }
-void binary::setBin(const std::string& s){
-  *this = s;
-}
 void binary::append(char c){
   *this += c;
 }

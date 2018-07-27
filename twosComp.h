@@ -8,10 +8,14 @@ class twosComp: public integer { //[-32768, +32767]
   static twosComp maxB;
   static twosComp zero;
   void toBin(int x);
+  void plus(twosComp&, twosComp) const;
+  void discord(twosComp&, twosComp) const;
+  bool checkSign(bool, bool) const;
 public:
   twosComp(std::string ="");
   twosComp(const char*);
   twosComp(int);
+  twosComp(std::string::const_iterator, std::string::const_iterator);
   int toVal() const;
   twosComp& operator++();
   twosComp& operator--();

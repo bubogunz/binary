@@ -10,8 +10,7 @@
 using namespace std;
 
 int main(){
-  twosComp x = -32760, y="0000000010101010";
-  //cout << x << ;
-  for(int i=0; i<10; ++i)
-    cout << --x << endl;
+  twosComp x = -32766, y = -3, z = -32750;
+  cout << x << ' ' << y <</* ' ' << z << */endl;
+  cout << x+y<< endl;
 }
