@@ -61,6 +61,19 @@ bool twosComp::checkSign(bool o1, bool o2) const{
     return false;
   return true;
 }
+void twosComp::conj(){
+  if(*this!=zero){
+    if(isNeg()){
+      try { --(*this); }
+      catch(ofEx) { throw ofEx(); }
+      complement();
+    }else{
+      complement();
+      try { ++(*this); }
+      catch(ofEx) { throw ofEx(); }
+    }
+  }
+}
 twosComp& twosComp::operator++(){
   bool carry = true; twosComp& x = *this;
   for(int i=length()-1; i>0 && carry; --i){
@@ -101,79 +114,73 @@ void twosComp::plus(twosComp& res, twosComp x) const{
         res.replace(res.begin(),res.begin()+tmp.length(),
                   tmp.begin(),tmp.end());
     }
-    //cout << tmp << endl;
   }
   if(of) throw ofEx();
 }
 twosComp& twosComp::operator+(const binary& r){
-  twosComp& x = *this;
   twosComp res = *this;
   if(res!=zero){
     if(r!=zero){
       twosComp op = r;
-      switch(x[0]){
-        case '0':{
-          switch (r[0]) {
-            case '0': { //(+a)+(+b)
-              plus(res, op);
-                if(res[0] == '1')
-                  throw ofEx();
-              break;
-            }
-            case '1': { //(+a)+(-b)
-              try {
-                plus(res, op);
-                res[0] = res[0]=='0' ? '1' : '0';
-              }
-              catch(ofEx){ }
-            }
-            default: break;
-          }
-          break;
-        }
-        case '1': {
-          switch(r[0]){
-            case '0': { //(-a)+(+b)
-              try {
-                plus(op, res);
-                op[0] = op[0]=='0' ? '1' : '0';
-              }
-              catch(ofEx){ }
-              res = op;
-              break;
-            }
-            case '1': { //(-a)+(-b)
-              res[0] = op[0] = '0';
-              try
-                { plus(res, op); }
-              catch(ofEx) {
-                res[0] = '1';
-                return *this = res;
-              }
-              throw ofEx();
-              break;
-            }
-            default: break;
-            }
-          break;
-        }
-      default: break;
+      if(!isNeg() && !r.isNeg()){ //(+a)+(+b)
+        try { plus(res, op);}
+        catch(ofEx) { throw ofEx(); }
       }
+      else if(!isNeg() && r.isNeg()){
+        try {
+          plus(res, op);
+          res[0] = res[0]=='0' ? '1' : '0';
+        }
+        catch(ofEx){ }
+      }
+      else if(isNeg() && !r.isNeg()){
+        try {
+          plus(op, res);
+          op[0] = op[0]=='0' ? '1' : '0';
+        }
+        catch(ofEx){ }
+        res = op;
+      }
+      else if(isNeg() && r.isNeg()){
+        res[0] = op[0] = '0';
+        try { plus(res, op); }
+        catch(ofEx) {
+          res[0] = '1';
+          return *this = res;
+        }
+        throw ofEx();
+      }
+    }
     return *this = res;
-    }else
-      return *this = res;
   }else
     return *this = r;
 }
 twosComp& twosComp::operator-(const binary& r){
-  return zero;
+  twosComp op = r;
+  if(op!=zero){
+    op.conj();
+    return *this = (*this)+op;
+  }
+  return *this;
 }
 twosComp& twosComp::operator*(const binary& r){
-  return zero;
+  twosComp A = zero, Q = r, &M = *this; char Q1 = '0';
+  unsigned int n = length(), x = n-1;
+  while(n>0){
+    if(Q[x]=='1' && Q1=='0')
+      A = A - M;
+    else if(Q[x]=='0' && Q1=='1')
+      A = A + M;
+    char c = A.arShiftR();
+    Q1 = Q.arShiftR(c);
+    --n;
+   cout << Q << endl;
+  }
+  return *this = Q;
 }
 twosComp& twosComp::operator/(const binary& r) {
   return zero;
 }
 std::ostream& operator<<(std::ostream& os, const twosComp& s){
-    return os << s.getBin() << ' ' <<s.toVal();
+    return os << s.getBin() << ' ' << s.toVal();
 }

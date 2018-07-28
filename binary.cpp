@@ -11,6 +11,22 @@ binary binary::getBin() const{
 bool binary::isNeg() const{
   return (*this)[0]=='1' ? true : false;
 }
+char binary::arShiftR(char c){
+  binary& x = *this;
+  char buffer;
+  unsigned int i=0;
+  if(c=='\0'){
+    buffer = x[0];
+    ++i;
+  }
+  else buffer = c;
+  for(; i<length();++i){
+    char tmp = x[i];
+    x[i] = buffer;
+    buffer = tmp;
+  }
+  return buffer;
+}
 void binary::popZeroFront(){
   int i = 0;
   while((*this)[i] == '0')

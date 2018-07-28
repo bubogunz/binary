@@ -11,6 +11,7 @@ class twosComp: public integer { //[-32768, +32767]
   void plus(twosComp&, twosComp) const;
   void discord(twosComp&, twosComp) const;
   bool checkSign(bool, bool) const;
+  void conj();
 public:
   twosComp(std::string ="");
   twosComp(const char*);
@@ -21,7 +22,7 @@ public:
   twosComp& operator--();
   twosComp& operator+(const binary&);
   twosComp& operator-(const binary&);
-  twosComp& operator*(const binary&);
+  twosComp& operator*(const binary&); //Booth's algorithm for 2's complement multiplication
   twosComp& operator/(const binary&);
 };
 std::ostream& operator<<(std::ostream&, const twosComp&);
