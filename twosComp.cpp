@@ -22,7 +22,7 @@ void twosComp::toBin(int x){
       break;
     default:
       if(x<twosComp::minV || x>twosComp::maxV) throw ofEx();
-      int i = zero.length()-1;
+      unsigned int i = zero.length()-1;
       twosComp res;
       if(x<0){
         x += pow(2,i);
@@ -38,7 +38,7 @@ void twosComp::toBin(int x){
   }
 }
 int twosComp::toVal() const{
-  int i, k;
+  unsigned int i, k;
   i = k = length()-1;
   int num = 0;
   const twosComp& x = *this;
@@ -119,41 +119,38 @@ void twosComp::plus(twosComp& res, twosComp x) const{
 }
 twosComp& twosComp::operator+(const binary& r){
   twosComp res = *this;
-  if(res!=zero){
-    if(r!=zero){
-      twosComp op = r;
-      if(!isNeg() && !r.isNeg()){ //(+a)+(+b)
-        try { plus(res, op);}
-        catch(ofEx) { throw ofEx(); }
-      }
-      else if(!isNeg() && r.isNeg()){
-        try {
-          plus(res, op);
-          res[0] = res[0]=='0' ? '1' : '0';
-        }
-        catch(ofEx){ }
-      }
-      else if(isNeg() && !r.isNeg()){
-        try {
-          plus(op, res);
-          op[0] = op[0]=='0' ? '1' : '0';
-        }
-        catch(ofEx){ }
-        res = op;
-      }
-      else if(isNeg() && r.isNeg()){
-        res[0] = op[0] = '0';
-        try { plus(res, op); }
-        catch(ofEx) {
-          res[0] = '1';
-          return *this = res;
-        }
-        throw ofEx();
-      }
-    }
+  if(res==zero) return *this = r;
+  if(r==zero) return *this;
+  twosComp op = r;
+  if(!isNeg() && !r.isNeg()){ //(+a)+(+b)
+    try { plus(res, op);}
+    catch(ofEx) { throw ofEx(); }
     return *this = res;
-  }else
-    return *this = r;
+  }
+  if(!isNeg() && r.isNeg()){
+    try {
+      plus(res, op);
+      res[0] = res[0]=='0' ? '1' : '0';
+    }
+    catch(ofEx){ }
+    return *this = res;
+  }
+  if(isNeg() && !r.isNeg()){
+    try {
+      plus(op, res);
+      op[0] = op[0]=='0' ? '1' : '0';
+    }
+    catch(ofEx){ }
+    return *this = op;
+  }
+  //isNeg() && r.isNeg()
+  res[0] = op[0] = '0';
+  try { plus(res, op); }
+  catch(ofEx) {
+    res[0] = '1';
+    return *this = res;
+  }
+  throw ofEx();
 }
 twosComp& twosComp::operator-(const binary& r){
   twosComp op = r;
@@ -174,7 +171,6 @@ twosComp& twosComp::operator*(const binary& r){
     char c = A.arShiftR();
     Q1 = Q.arShiftR(c);
     --n;
-   cout << Q << endl;
   }
   return *this = Q;
 }

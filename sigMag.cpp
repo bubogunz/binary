@@ -199,32 +199,28 @@ bool sigMag::operator>=(const sigMag& r) const{
 }
 sigMag& sigMag::operator+(const binary& r) {
   sigMag res = *this;
-  if(res!=zero){
-    if(r!=zero){
-      sigMag op = r;
-      if(!isNeg() && !r.isNeg()){
-        try { plus(res, op); }
-        catch(ofEx) { throw ofEx(); }
-      }
-      else if(!isNeg() && r.isNeg()){
-        discord(res, op);
-      }
-      else if(isNeg() && !r.isNeg()){
-        discord(op, res);
-        res = op;
-      }
-      else if(isNeg() && r.isNeg()){
-        try {
-          res[0] = op[0] = '0';
-          plus(res, op);
-          res[0] = '1';
-        }
-        catch(ofEx) { throw ofEx(); }
-      }
-    }
+  if(res==zero) return *this = r;
+  if(r==zero) return *this;
+  sigMag op = r;
+  if(!isNeg() && !r.isNeg()){
+    try { plus(res, op); }
+    catch(ofEx) { throw ofEx(); }
     return *this = res;
   }
-  return *this = r;
+  if(!isNeg() && r.isNeg()){
+    discord(res, op);
+    return *this = res;
+  }
+  if(isNeg() && !r.isNeg()){
+    discord(op, res);
+    return *this = op;
+  }
+  //isNeg() && r.isNeg()
+  res[0] = op[0] = '0';
+  try { plus(res, op); }
+  catch(ofEx) { throw ofEx(); }
+  res[0] = '1';
+  return *this = res;
 }
 sigMag& sigMag::operator-(const binary& r) {
   sigMag op = r;
