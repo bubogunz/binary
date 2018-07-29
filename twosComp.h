@@ -12,6 +12,8 @@ class twosComp: public integer { //[-32768, +32767]
   void discord(twosComp&, twosComp) const;
   bool checkSign(bool, bool) const;
   void conj();
+  char arShiftR(char ='\0'); //arithmetic shift right
+  void shiftL();
 public:
   twosComp(std::string ="");
   twosComp(const char*);

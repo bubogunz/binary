@@ -10,7 +10,8 @@
 using namespace std;
 
 int main(){
-
+  twosComp x = -3, y = 327 , z = 2;
+  cout << y*x << endl;
 }
 /*sigMag x = 32, y =65 , z = 2;
   cout << x+y << endl;

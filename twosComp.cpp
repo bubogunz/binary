@@ -22,7 +22,7 @@ void twosComp::toBin(int x){
       break;
     default:
       if(x<twosComp::minV || x>twosComp::maxV) throw ofEx();
-      unsigned int i = zero.length()-1;
+      int i = zero.length()-1;
       twosComp res;
       if(x<0){
         x += pow(2,i);
@@ -38,7 +38,8 @@ void twosComp::toBin(int x){
   }
 }
 int twosComp::toVal() const{
-  unsigned int i, k;
+  int i;
+  unsigned int k;
   i = k = length()-1;
   int num = 0;
   const twosComp& x = *this;
@@ -162,7 +163,7 @@ twosComp& twosComp::operator-(const binary& r){
 }
 twosComp& twosComp::operator*(const binary& r){
   twosComp A = zero, Q = r, &M = *this; char Q1 = '0';
-  unsigned int n = length(), x = n-1;
+  int n = length(), x = n-1;
   while(n>0){
     if(Q[x]=='1' && Q1=='0')
       A = A - M;
@@ -172,10 +173,72 @@ twosComp& twosComp::operator*(const binary& r){
     Q1 = Q.arShiftR(c);
     --n;
   }
+  bool sign = Q.isNeg() ? true : false;
+  if(sign!=checkSign(isNeg(),r.isNeg())) throw ofEx();
   return *this = Q;
 }
+char twosComp::arShiftR(char c){
+  binary& x = *this;
+  char buffer;
+  unsigned int i=0;
+  if(c=='\0'){
+    buffer = x[0];
+    ++i;
+  }
+  else buffer = c;
+  for(; i<length();++i){
+    char tmp = x[i];
+    x[i] = buffer;
+    buffer = tmp;
+  }
+  return buffer;
+}
+void twosComp::shiftL(){
+  replace(begin(),end()-1,begin()+1,end());
+  *(end()-1) = '0';
+}
 twosComp& twosComp::operator/(const binary& r) {
-  return zero;
+  if(r==zero) throw zeroEx();
+  bool wasNeg = false;
+  if(isNeg()){
+    wasNeg = true;
+    conj();
+  }
+  auto it=begin();
+  while(*(it+1)!='1' && it!=end())
+    ++it;
+  erase(begin(),it);
+  twosComp y = r;
+  if(y.isNeg()) y.conj();
+  it = y.begin();
+  while(*(it+1)!='1' && it!=y.end())
+    ++it;
+  y.erase(y.begin(),it);
+  twosComp x(begin(),begin()+y.length()), res;
+  if(x<y && length()<y.length()) return zero;
+  if(x<y) x.append((*this)[x.length()]);
+  res.append('1');
+  x = x - y;
+  y.insert(0, "0");
+  it = begin()+y.length();
+  while(x.length()<length()){
+    x.append(*it);
+    if(x<y) res.append('0');
+    else{
+      res.append('1');
+      x = x - y;
+    }
+    y.insert(0, "0");
+    ++it;
+  }
+  while(res.length()<zero.length())
+    res.insert(0,"0");
+  if(checkSign(wasNeg,r.isNeg())){
+      res.insert(0,"0");
+      res.conj();
+  }
+  else res.insert(0,"0");
+  return *this = res;
 }
 std::ostream& operator<<(std::ostream& os, const twosComp& s){
     return os << s.getBin() << ' ' << s.toVal();

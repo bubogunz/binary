@@ -255,7 +255,7 @@ sigMag& sigMag::operator*(const binary& r) {
 }
 sigMag& sigMag::operator/(const binary& r){
   if(r==zero) throw zeroEx();
-  bool wasNeg = (*this)[0] =='0' ? false : true;
+  bool wasNeg = isNeg() ? true : false;
   if(wasNeg) (*this)[0] = '0';
   auto it=begin();
   while(*(it+1)!='1' && it!=end())

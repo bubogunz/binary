@@ -9,7 +9,6 @@ public:
   binary(const binary&);
   binary(std::string::const_iterator,std::string::const_iterator);
   binary getBin() const;
-  char arShiftR(char ='\0'); //arithmetic shift right
   bool isNeg() const;
   void popZeroFront();
   void pushZeroBack(int);
