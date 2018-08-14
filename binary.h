@@ -19,6 +19,7 @@ public:
   void append(std::string);
   void shiftR();
   void shiftL();
+  void setMant(const binary&, binary&) const;
   /*virtual binary& operator--();
   virtual binary& operator++();*/
 };

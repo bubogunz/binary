@@ -48,6 +48,15 @@ void binary::complement(){
       (*this)[i] == '1' ? (*this)[i] = '0'
                         : (*this)[i] = '1';
 }
+void binary::setMant(const binary& exp, binary& mant) const{
+  if(exp=="000000"){
+    if(!isNeg()) mant.insert(0,"00");
+    else mant.insert(0,"10");
+  }else{
+    if(!isNeg()) mant.insert(0,"01");
+    else mant.insert(0,"11");
+  }
+}
 /*binary& binary::operator--(){
   bool carry = true; binary& x = *this;
     for(int i=length()-1; i>=0 && carry; --i){

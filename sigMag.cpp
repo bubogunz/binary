@@ -200,7 +200,7 @@ sigMag& sigMag::operator*(const binary& r) {
     if((*it)=='1'){
       b.insert(0,i,'0');
       b.insert(0,mant);
-      auto x = b.begin()+(b.length()-(this->length()));
+      auto x = b.begin()+(b.length()-(length()));
       std::string checkOf(b.begin(),x);
       if(checkOf.find('1')!=std::string::npos)
         throw ofEx();

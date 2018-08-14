@@ -12,8 +12,9 @@ class float16: public floatP{
   static std::string buildStr(int&, int);
   static void inc(std::string&);
   static void dec(std::string&);
+  static sigMag mul(const sigMag&, const sigMag&);
+  static sigMag checkExpOF(const sigMag, sigMag);
   static void round(std::string&, double&, double);
-  static void setMant(const sigMag&, sigMag&);
   void normalize(binary&, binary&) const;
   void conj();
 public:

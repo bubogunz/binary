@@ -28,6 +28,34 @@ void float16::inc(std::string& res){
   }
   if(carry) throw ofEx();
 }
+sigMag float16::checkExpOF(const sigMag exp1, sigMag exp2){
+  exp2 = exp2 - sigMag(bias);
+  try{ exp2 = exp2+exp1; }
+  catch(ofEx){ throw ofEx(); }
+  if(exp2=="011111") throw ofEx();
+  if(exp2.isNeg()) throw ufEx();
+  return exp2;
+}
+sigMag float16::mul(const sigMag& mant1, const sigMag& mant2){
+  auto it = mant2.end()-1;
+  sigMag res = zero;
+  //cout << mant1 << endl << mant2 << endl;
+  for(int i=0; it>=mant2.begin(); --it,++i){
+    std::string b;
+    if((*it)=='1'){
+      //cout << i << endl;
+      b.insert(0,i,'0');
+      b.insert(0,mant1);
+      sigMag buffer(b);
+      //cout << res << " +" << endl << buffer << " =" << endl;
+      while(res.length()!=buffer.length()) res.insert(0,"0");
+      res = res + buffer;
+      //cout << res << endl;
+    }
+  }
+  res.erase(12);
+  return res;
+}
 void float16::dec(std::string& res){
   bool carry = true;
     for(int i=res.length()-1; i>=0 && carry; --i){
@@ -146,25 +174,16 @@ void float16::normalize(binary& mant, binary& exp) const{
   mant.erase(0,3);
   exp.erase(0,1);
 }
-void float16::setMant(const sigMag& exp, sigMag& mant){
-  if(exp=="000000"){
-    if(!mant.isNeg()) mant.insert(0,"00");
-    else mant.insert(0,"10");
-  }else{
-    if(!mant.isNeg()) mant.insert(0,"01");
-    else mant.insert(0,"11");
-  }
-}
 float16& float16::operator+(const binary& r){
   if(*this==zero) return *this = r;
   if(r==zero) return *this;
   std::string tmp;
-  sigMag exp1(begin()+1, begin()+6); exp1.insert(0,"0");
-  sigMag exp2(r.begin()+1, r.begin()+6); exp2.insert(0,"0");
+  sigMag exp1 = substr(1,5); exp1.insert(0,"0");
+  sigMag exp2 = r.substr(1,5); exp2.insert(0,"0");
   tmp = (exp1=="000000") ? "00" : "01";
-  sigMag mant1(begin()+6,end()); mant1.insert(0,tmp);
+  sigMag mant1 = substr(6,10); mant1.insert(0,tmp);
   tmp = (exp2=="000000") ? "00" : "01";
-  sigMag mant2(r.begin()+6,r.end()); mant2.insert(0,tmp);
+  sigMag mant2 = r.substr(6,10); mant2.insert(0,tmp);
   bool out = false;
   while(exp1!=exp2 && !out){
     if(exp1>exp2){
@@ -210,11 +229,20 @@ float16& float16::operator*(const binary& r){
   if(r==zero) return *this = zero;
   std::string tmp;
   sigMag exp1 = substr(1,5); exp1.insert(0,"0");
-  sigMag exp2 = substr(1,5); exp2.insert(0,"0");
+  sigMag exp2 = r.substr(1,5); exp2.insert(0,"0");
   sigMag mant1 = substr(6,10);
-  sigMag mant2 = substr(6,10);
-  setMant(exp1,mant1); setMant(exp2,mant2);
-
+  sigMag mant2 = r.substr(6,10);
+  char sign = checkSign(isNeg(),r.isNeg()) ? '1' : '0';
+  setMant(exp1,mant1); r.setMant(exp2,mant2);
+  sigMag exp;
+  try{ exp = checkExpOF(exp1,exp2); }
+  catch(ofEx){ throw ofEx(); }
+  catch(ufEx) { throw ufEx(); }
+  sigMag mant = mul(mant1,mant2);
+  if(exp=="000000" || exp=="100000") mant.shiftR();
+  mant.erase(0,2);
+  exp.erase(0,1);
+  return *this = sign+exp+mant;
 }
 float16& float16::operator/(const binary& r){
   //return (toVal()/r.toVal());
