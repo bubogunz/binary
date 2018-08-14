@@ -8,34 +8,32 @@ int twosComp::maxV = 32767;
 twosComp twosComp::minB = "1000000000000000";
 twosComp twosComp::maxB = "0111111111111111";
 twosComp twosComp::zero = "0000000000000000";
-twosComp::twosComp(std::string s): integer(s){ }
-twosComp::twosComp(const char* s): integer(s){ }
-twosComp::twosComp(int i){
-  toBin(i);
-}
+twosComp::twosComp(std::string s): integer(s) { }
+twosComp::twosComp(const char* s): integer(s) { }
+twosComp::twosComp(int i): integer(toBin(i)) { }
 twosComp::twosComp(std::string::const_iterator first, std::string::const_iterator last):
       integer(first,last) { }
-void twosComp::toBin(int x){
+std::string twosComp::toBin(int x) const{
+  twosComp res;
   switch(x){
     case 0:
-      *this = zero;
+      res = zero;
       break;
     default:
-      if(x<twosComp::minV || x>twosComp::maxV) throw ofEx();
+      if(x<minV || x>maxV) throw ofEx();
       int i = zero.length()-1;
-      twosComp res;
       if(x<0){
         x += pow(2,i);
-        res.append('1');
-      }else res.append('0');
+        res.append("1");
+      }else res.append("0");
       i--;
       while(i>=0){
         res.append(buildStr(x,i));
         --i;
       }
-      *this = res;
       break;
   }
+  return res;
 }
 int twosComp::toVal() const{
   int i;
@@ -51,16 +49,6 @@ int twosComp::toVal() const{
     i--;
   }
   return num;
-}
-bool twosComp::checkSign(bool o1, bool o2) const{
-  if(!o1){
-    if(o2)
-      return true;
-    return false;
-  }
-  if(o2)
-    return false;
-  return true;
 }
 void twosComp::conj(){
   if(*this!=zero){
@@ -219,19 +207,18 @@ twosComp& twosComp::operator/(const binary& r) {
   if(x<y) x.append((*this)[x.length()]);
   res.append('1');
   x = x - y;
-  y.insert(0, "0");
   it = begin()+y.length();
   while(x.length()<length()){
     x.append(*it);
+    y.insert(0, "0");
     if(x<y) res.append('0');
     else{
       res.append('1');
       x = x - y;
     }
-    y.insert(0, "0");
     ++it;
   }
-  while(res.length()<zero.length())
+  while(res.length()<zero.length()-1)
     res.insert(0,"0");
   if(checkSign(wasNeg,r.isNeg())){
       res.insert(0,"0");
@@ -241,5 +228,6 @@ twosComp& twosComp::operator/(const binary& r) {
   return *this = res;
 }
 std::ostream& operator<<(std::ostream& os, const twosComp& s){
-    return os << s.getBin() << ' ' << s.toVal();
+  std::string x(s);
+  return os << x << ' ' << s.toVal();
 }

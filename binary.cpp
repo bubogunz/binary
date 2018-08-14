@@ -2,14 +2,21 @@
 #include "opEx.h"
 binary::binary(std::string s): std::string(s) { }
 binary::binary(const char* s): std::string(s) { }
-binary::binary(const binary& s): std::string(s) { }
+//binary::binary(const binary& s): std::string(s) { }
 binary::binary(std::string::const_iterator first, std::string::const_iterator last):
         std::string(first,last) { }
-binary binary::getBin() const{
-  return *this;
+bool binary::checkSign(bool o1, bool o2) const{
+  if(!o1){
+    if(o2)
+      return true;
+    return false;
+  }
+  if(o2)
+    return false;
+  return true;
 }
 bool binary::isNeg() const{
-  return (*this)[0]=='1' ? true : false;
+  return front() == '1' ? true : false;
 }
 void binary::popZeroFront(){
   int i = 0;
@@ -41,7 +48,7 @@ void binary::complement(){
       (*this)[i] == '1' ? (*this)[i] = '0'
                         : (*this)[i] = '1';
 }
-binary& binary::operator--(){
+/*binary& binary::operator--(){
   bool carry = true; binary& x = *this;
     for(int i=length()-1; i>=0 && carry; --i){
       if(x[i] == '1'){
@@ -54,14 +61,24 @@ binary& binary::operator--(){
   return *this;
 }
 binary& binary::operator++(){
-  bool carry = true; binary& x = *this;
-    for(int i=length()-1; i>=0 && carry; --i){
-      if(x[i] == '0'){
-        x[i] = '1';
-        carry = false;
-      }else
-        x[i] = '0';
+  auto it = end()-1;
+  bool carry = true;
+  while(it>=begin() && carry){
+    if((*it)=='0'){
+      (*it) = '1';
+      carry = false;
     }
+    else (*it) = '0';
+    --it;
+  }
   if(carry) throw ofEx();
   return *this;
+}*/
+void binary::shiftR(){
+  replace(begin()+1,end(),begin(),end()-1);
+  front() = '0';
+}
+void binary::shiftL(){
+  replace(begin(),end()-1,begin()+1,end());
+  back() = '0';
 }

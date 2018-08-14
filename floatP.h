@@ -2,13 +2,11 @@
 #define FLOATP_H
 #include "binary.h"
 class floatP: public binary{
-protected:
-  virtual void toBin(double) =0;
 public:
-  floatP(std::string ="0000000000000000");
+  floatP(std::string ="");
+  floatP(std::string::const_iterator,std::string::const_iterator);
   floatP(const char*);
   virtual double toVal() const =0;
-  virtual void round(floatP&, double&, double) const =0;
 };
 #endif // FLOATP_H
 

@@ -8,11 +8,11 @@ class sigMag : public integer { //[-32767, +32767]
   static sigMag minB;
   static sigMag maxB;
   static sigMag zero;
-  void toBin(int);
+  virtual std::string toBin(int) const override;
   void twosComp(sigMag&) const;
   void plus(sigMag&, sigMag) const;
   void discord(sigMag&, sigMag) const;
-  bool checkSign(bool o1, bool o2) const;
+  bool operator<(const sigMag& r) const;
 public:
   sigMag(std::string ="");
   sigMag(const char*);
@@ -21,10 +21,9 @@ public:
   int toVal() const;
   sigMag& operator++();
   sigMag& operator--();
-  bool operator<(const sigMag& r) const;
-  bool operator>(const sigMag& r) const;
-  bool operator<=(const sigMag& r) const;
-  bool operator>=(const sigMag& r) const;
+  //bool operator>(const sigMag& r) const;
+  //bool operator<=(const sigMag& r) const;
+  //bool operator>=(const sigMag& r) const;
   sigMag& operator+(const binary&);
   sigMag& operator-(const binary&);
   sigMag& operator*(const binary&);

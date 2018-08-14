@@ -3,10 +3,10 @@
 #include "binary.h"
 class integer: public binary {
 protected:
-  virtual void toBin(int) =0;
+  virtual std::string toBin(int) const =0;
   static char buildStr(int&, int);
 public:
-  integer(std::string ="0000000000000000");
+  integer(std::string ="");
   integer(const char*);
   integer(std::string::const_iterator, std::string::const_iterator);
   virtual integer& operator++() =0;

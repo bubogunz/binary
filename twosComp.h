@@ -7,10 +7,9 @@ class twosComp: public integer { //[-32768, +32767]
   static twosComp minB;
   static twosComp maxB;
   static twosComp zero;
-  void toBin(int x);
+  virtual std::string toBin(int x) const override;
   void plus(twosComp&, twosComp) const;
   void discord(twosComp&, twosComp) const;
-  bool checkSign(bool, bool) const;
   void conj();
   char arShiftR(char ='\0'); //arithmetic shift right
   void shiftL();
