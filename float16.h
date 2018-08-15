@@ -12,10 +12,11 @@ class float16: public floatP{
   static std::string buildStr(int&, int);
   static void inc(std::string&);
   static void dec(std::string&);
-  static sigMag mul(const sigMag&, const sigMag&);
-  static sigMag checkExpOF(const sigMag, sigMag);
+  static sigMag mul(const sigMag&, const sigMag&, sigMag&);
+  static sigMag checkExpErr(const sigMag, sigMag);
   static void round(std::string&, double&, double);
-  void normalize(binary&, binary&) const;
+  static void normPlus(binary&, binary&);
+  static void normMul(sigMag&, sigMag&);
   void conj();
 public:
   float16(std::string ="");

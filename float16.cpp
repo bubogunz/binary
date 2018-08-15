@@ -28,31 +28,50 @@ void float16::inc(std::string& res){
   }
   if(carry) throw ofEx();
 }
-sigMag float16::checkExpOF(const sigMag exp1, sigMag exp2){
+sigMag float16::checkExpErr(const sigMag exp1, sigMag exp2){
   exp2 = exp2 - sigMag(bias);
   try{ exp2 = exp2+exp1; }
   catch(ofEx){ throw ofEx(); }
   if(exp2=="011111") throw ofEx();
   if(exp2.isNeg()) throw ufEx();
+  //cout << exp2 << endl;
   return exp2;
 }
-sigMag float16::mul(const sigMag& mant1, const sigMag& mant2){
+void float16::normMul(sigMag& mant, sigMag& exp){
+  mant.erase(0,1);
+  while(exp!="000000" && mant[1]!='1'){
+    //cout << exp<< ' ' << mant<<endl;
+    mant.shiftL();
+    --exp;
+  }
+  //cout << exp<<' '<<mant <<endl;
+}
+sigMag float16::mul(const sigMag& mant1, const sigMag& mant2, sigMag& exp){
   auto it = mant2.end()-1;
-  sigMag res = zero;
+  sigMag res; res.insert(0,12,'0');
   //cout << mant1 << endl << mant2 << endl;
+  bool of = false;
   for(int i=0; it>=mant2.begin(); --it,++i){
     std::string b;
     if((*it)=='1'){
+      of = false;
       //cout << i << endl;
       b.insert(0,i,'0');
       b.insert(0,mant1);
       sigMag buffer(b);
-      //cout << res << " +" << endl << buffer << " =" << endl;
       while(res.length()!=buffer.length()) res.insert(0,"0");
-      res = res + buffer;
+      //cout << res << " +" << endl << buffer << " =" << endl;
+      try { res = res + buffer; }
+      catch(ofEx) {
+        res.front() = '1';
+        res.insert(0,"0");
+        of = true;
+      }
       //cout << res << endl;
     }
   }
+  if(of) ++exp;
+  if(res[1]!='1') normMul(res, exp);
   res.erase(12);
   return res;
 }
@@ -154,7 +173,7 @@ double float16::toVal() const{
   e ? e -= bias : e = -14;
   return isNeg() ? -(num*pow(2,e)) : num*pow(2,e);
 }
-void float16::normalize(binary& mant, binary& exp) const{
+void float16::normPlus(binary& mant, binary& exp){
   int i = mant.find_first_of('1');
   if(exp!="000000"){
     while(i!=2){
@@ -217,7 +236,7 @@ float16& float16::operator+(const binary& r){
     ++exp;
     if(exp=="011111") throw ofEx();
   }
-  normalize(mant, exp);
+  normPlus(mant, exp);
   return *this = tmp+exp+mant;
 }
 float16& float16::operator-(const binary& r){
@@ -235,10 +254,11 @@ float16& float16::operator*(const binary& r){
   char sign = checkSign(isNeg(),r.isNeg()) ? '1' : '0';
   setMant(exp1,mant1); r.setMant(exp2,mant2);
   sigMag exp;
-  try{ exp = checkExpOF(exp1,exp2); }
+  try{ exp = checkExpErr(exp1,exp2); }
   catch(ofEx){ throw ofEx(); }
   catch(ufEx) { throw ufEx(); }
-  sigMag mant = mul(mant1,mant2);
+  sigMag mant;
+  mant = mul(mant1,mant2,exp);
   if(exp=="000000" || exp=="100000") mant.shiftR();
   mant.erase(0,2);
   exp.erase(0,1);

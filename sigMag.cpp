@@ -251,5 +251,5 @@ sigMag& sigMag::operator/(const binary& r){
 }
 std::ostream& operator<<(std::ostream& os, const sigMag& s){
   std::string x(s);
-  return os << x/* << ' ' << s.toVal()*/;
+  return os << x << ' ' << s.toVal();
 }
