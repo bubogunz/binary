@@ -12,22 +12,22 @@ class sigMag : public integer { //[-32767, +32767]
   void twosComp(sigMag&) const;
   void plus(sigMag&, sigMag) const;
   void discord(sigMag&, sigMag) const;
-  bool operator<(const sigMag& r) const;
 public:
   sigMag(std::string ="");
   sigMag(const char*);
   sigMag(int);
   sigMag(std::string::const_iterator, std::string::const_iterator);
   int toVal() const;
+  bool operator<(const sigMag& r) const;
+  bool operator>(const sigMag& r) const;
+  bool operator<=(const sigMag& r) const;
+  bool operator>=(const sigMag& r) const;
   sigMag& operator++();
   sigMag& operator--();
-  //bool operator>(const sigMag& r) const;
-  //bool operator<=(const sigMag& r) const;
-  //bool operator>=(const sigMag& r) const;
-  sigMag& operator+(const binary&);
-  sigMag& operator-(const binary&);
-  sigMag& operator*(const binary&);
-  sigMag& operator/(const binary&);
+  sigMag& operator+(const binary&) override;
+  sigMag& operator-(const binary&) override;
+  sigMag& operator*(const binary&) override;
+  sigMag& operator/(const binary&) override;
 };
 std::ostream& operator<<(std::ostream&, const sigMag&); //os.str() ritorna cio' che contiene lo stream sotto forma di stringa
 #endif // SIGMAG_H

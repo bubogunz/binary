@@ -7,17 +7,13 @@ class float16: public floatP{
   static double UF; //underflow
   static int bias;
   static float16 zero;
-  static std::string toBin(double);
-  static std::string buildStr(double&, int);
-  static std::string buildStr(int&, int);
-  static void inc(std::string&);
-  static void dec(std::string&);
-  static sigMag mul(const sigMag&, const sigMag&, sigMag&);
-  static sigMag checkExpErr(const sigMag, sigMag);
-  static void round(std::string&, double&, double);
+  std::string toBin(double) const override;
+  sigMag mul(const sigMag&, const sigMag&, sigMag&) const override;
+  sigMag div(sigMag&, sigMag&, sigMag&) const override;
+  sigMag checkExpMul(const sigMag, sigMag) const override;
+  sigMag checkExpDiv(sigMag, const sigMag) const override;
   static void normPlus(binary&, binary&);
-  static void normMul(sigMag&, sigMag&);
-  void conj();
+  static void norm(sigMag&, sigMag&);
 public:
   float16(std::string ="");
   float16(const char*);
@@ -25,10 +21,10 @@ public:
   float16(int);
   float16(std::string::const_iterator,std::string::const_iterator);
   double toVal() const;
-  float16& operator+(const binary&);
-  float16& operator-(const binary&);
-  float16& operator*(const binary&);
-  float16& operator/(const binary&);
+  float16& operator+(const binary&) override;
+  float16& operator-(const binary&) override;
+  float16& operator*(const binary&) override;
+  float16& operator/(const binary&) override;
 };
 std::ostream& operator<<(std::ostream&, const float16&);
 #endif // FLOAT16_H

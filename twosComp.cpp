@@ -204,16 +204,16 @@ twosComp& twosComp::operator/(const binary& r) {
   y.erase(y.begin(),it);
   twosComp x(begin(),begin()+y.length()), res;
   if(x<y && length()<y.length()) return zero;
-  if(x<y) x.append((*this)[x.length()]);
-  res.append('1');
+  if(x<y) x.insert(x.end(),(*this)[x.length()]);
+  res.append("1");
   x = x - y;
   it = begin()+y.length();
   while(x.length()<length()){
-    x.append(*it);
+    x.insert(x.end(),*it);
     y.insert(0, "0");
-    if(x<y) res.append('0');
+    if(x<y) res.append("0");
     else{
-      res.append('1');
+      res.append("1");
       x = x - y;
     }
     ++it;

@@ -21,10 +21,10 @@ public:
   int toVal() const;
   twosComp& operator++();
   twosComp& operator--();
-  twosComp& operator+(const binary&);
-  twosComp& operator-(const binary&);
-  twosComp& operator*(const binary&); //Booth's algorithm for 2's complement multiplication
-  twosComp& operator/(const binary&);
+  twosComp& operator+(const binary&) override;
+  twosComp& operator-(const binary&) override;
+  twosComp& operator*(const binary&) override; //Booth's algorithm for 2's complement multiplication
+  twosComp& operator/(const binary&) override;
 };
 std::ostream& operator<<(std::ostream&, const twosComp&);
 #endif // TWOSCOMP_H

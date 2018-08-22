@@ -4,7 +4,7 @@
 class integer: public binary {
 protected:
   virtual std::string toBin(int) const =0;
-  static char buildStr(int&, int);
+  static std::string buildStr(int&, int);
 public:
   integer(std::string ="");
   integer(const char*);

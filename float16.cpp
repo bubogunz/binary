@@ -12,103 +12,15 @@ float16::float16(std::string::const_iterator first,std::string::const_iterator l
   floatP(first, last) { }
 float16::float16(double d): floatP(toBin(d)) { }
 float16::float16(int d): floatP(toBin(d)) { }
-void float16::conj(){
-  front() = isNeg() ? '0' : '1';
-}
-void float16::inc(std::string& res){
-  int it = res.length()-1;
-  bool carry = true;
-  while(it>=0 && carry){
-    if(res[it]=='0'){
-      res[it] = '1';
-      carry = false;
-    }
-    else res[it] = '0';
-    --it;
-  }
-  if(carry) throw ofEx();
-}
-sigMag float16::checkExpErr(const sigMag exp1, sigMag exp2){
+sigMag float16::checkExpMul(const sigMag exp1, sigMag exp2) const{
   exp2 = exp2 - sigMag(bias);
   try{ exp2 = exp2+exp1; }
   catch(ofEx){ throw ofEx(); }
   if(exp2=="011111") throw ofEx();
   if(exp2.isNeg()) throw ufEx();
-  //cout << exp2 << endl;
   return exp2;
 }
-void float16::normMul(sigMag& mant, sigMag& exp){
-  mant.erase(0,1);
-  while(exp!="000000" && mant[1]!='1'){
-    //cout << exp<< ' ' << mant<<endl;
-    mant.shiftL();
-    --exp;
-  }
-  //cout << exp<<' '<<mant <<endl;
-}
-sigMag float16::mul(const sigMag& mant1, const sigMag& mant2, sigMag& exp){
-  auto it = mant2.end()-1;
-  sigMag res; res.insert(0,12,'0');
-  //cout << mant1 << endl << mant2 << endl;
-  bool of = false;
-  for(int i=0; it>=mant2.begin(); --it,++i){
-    std::string b;
-    if((*it)=='1'){
-      of = false;
-      //cout << i << endl;
-      b.insert(0,i,'0');
-      b.insert(0,mant1);
-      sigMag buffer(b);
-      while(res.length()!=buffer.length()) res.insert(0,"0");
-      //cout << res << " +" << endl << buffer << " =" << endl;
-      try { res = res + buffer; }
-      catch(ofEx) {
-        res.front() = '1';
-        res.insert(0,"0");
-        of = true;
-      }
-      //cout << res << endl;
-    }
-  }
-  if(of) ++exp;
-  if(res[1]!='1') normMul(res, exp);
-  res.erase(12);
-  return res;
-}
-void float16::dec(std::string& res){
-  bool carry = true;
-    for(int i=res.length()-1; i>=0 && carry; --i){
-      if(res[i] == '1'){
-        res[i] = '0';
-        carry = false;
-      }else
-        res[i] = '1';
-    }
-  if(carry) throw ofEx();
-}
-void float16::round(std::string& res, double& x, double z){
-  while(z<2*x){
-    inc(res);
-    x -= z;
-  }
-}
-std::string float16::buildStr(double& x, int j){
-  double y = pow(2,j);
-  if(x>=y){
-    x = x - y;
-    return "1";
-  }
-  return "0";
-}
-std::string float16::buildStr(int& x, int j){
-  int y = pow(2,j);
-  if(x>=y){
-    x = x - y;
-    return "1";
-  }
-  return "0";
-}
-std::string float16::toBin(double x){
+std::string float16::toBin(double x) const{
   if(!x) return zero;
   else{
     if(x>OF || x<-(OF)) throw ofEx();
@@ -186,13 +98,99 @@ void float16::normPlus(binary& mant, binary& exp){
         dec(exp);
         --i;
       }
-      //cout << mant << ' ' << exp << endl;
     }
     if(exp.isNeg()) throw ufEx();
   }
   mant.erase(0,3);
   exp.erase(0,1);
 }
+void float16::norm(sigMag& mant, sigMag& exp){
+  while(exp!="000000" && mant[1]!='1'){
+    mant.shiftL();
+    --exp;
+  }
+}
+sigMag float16::mul(const sigMag& mant1, const sigMag& mant2, sigMag& exp) const{
+  std::string::const_iterator cit = mant2.end()-1;
+  sigMag res; res.insert(0,12,'0');
+  bool of = false;
+  for(int i=0; cit>=mant2.begin(); --cit,++i){
+    std::string b;
+    if((*cit)=='1'){
+      of = false;
+      b.insert(0,i,'0');
+      b.insert(0,mant1);
+      sigMag buffer(b);
+      while(res.length()!=buffer.length()) res.insert(0,"0");
+      try { res = res + buffer; }
+      catch(ofEx) {
+        res.front() = '1';
+        res.insert(0,"0");
+        of = true;
+      }
+    }
+  }
+  if(of) ++exp;
+  if(res[1]!='1'){
+    res.erase(0,1);
+    norm(res,exp);
+  }
+  if(exp=="000000" || exp=="100000") res.shiftR();
+  exp.erase(0,1);
+  return res.substr(2,10);
+}
+sigMag float16::div(sigMag& mant1, sigMag& mant2, sigMag& exp) const{
+  std::size_t p = mant2.find_last_of('1')+1;
+  sigMag x = mant1.substr(0,p);
+  sigMag res;
+  std::string::const_iterator cit = mant1.begin()+p;
+  int i = 11;
+  if(x<mant2)
+    res.append("0");
+  else{
+    res.append("1");
+    x = x - mant2;
+    --i;
+  }
+  while(cit!=mant1.end() && i>0){
+    switch (*cit) {
+      case '.': res.append(".");
+	break;
+      default:
+	x.insert(x.end(),*cit);
+	mant2.insert(0,x.length()-mant2.length(),'0');
+	if(x<mant2){
+	  res.append("0");
+	  if(i<11) --i;
+	}
+	else{
+	  res.append("1");
+	  x = x - mant2;
+	  --i;
+	}
+	break;
+    }
+    if(cit==mant1.end()-1 && i>0)
+      mant1.append("0");
+    ++cit;
+  }
+  if(exp!="000000" && res.front()!='1') norm(res,exp);
+  exp.erase(0,1);
+  res.erase(0,1);
+  res.shiftL();
+  if(res.length()<10)
+    res.pushZeroBack(10-res.length());
+  else res.erase(10);
+  return res;
+}
+sigMag float16::checkExpDiv(sigMag exp1, const sigMag exp2) const{
+  exp1 = exp1-exp2;
+  exp1 = exp1+sigMag("001111");
+  if(exp1=="0011111") throw ofEx();
+  if(exp1.isNeg()) throw ufEx();
+  return exp1;
+}
+
 float16& float16::operator+(const binary& r){
   if(*this==zero) return *this = r;
   if(r==zero) return *this;
@@ -254,18 +252,30 @@ float16& float16::operator*(const binary& r){
   char sign = checkSign(isNeg(),r.isNeg()) ? '1' : '0';
   setMant(exp1,mant1); r.setMant(exp2,mant2);
   sigMag exp;
-  try{ exp = checkExpErr(exp1,exp2); }
+  try{ exp = checkExpMul(exp1,exp2); }
   catch(ofEx){ throw ofEx(); }
   catch(ufEx) { throw ufEx(); }
-  sigMag mant;
-  mant = mul(mant1,mant2,exp);
-  if(exp=="000000" || exp=="100000") mant.shiftR();
-  mant.erase(0,2);
-  exp.erase(0,1);
+  sigMag mant = mul(mant1,mant2,exp);
   return *this = sign+exp+mant;
 }
 float16& float16::operator/(const binary& r){
-  //return (toVal()/r.toVal());
+  if(r==zero) throw zeroEx();
+  if(*this==zero) return *this;
+  sigMag exp1 = substr(1,5); exp1.insert(0,"0");
+  sigMag exp2 = r.substr(1,5); exp2.insert(0,"0");
+  sigMag mant1 = substr(6);
+  sigMag mant2 = r.substr(6);
+  char sign = checkSign(isNeg(),r.isNeg()) ? '1' : '0';
+  setMant(exp1,mant1); r.setMant(exp2,mant2);
+  sigMag exp;
+  try{ exp = checkExpDiv(exp1,exp2); }
+  catch(ofEx){ throw ofEx(); }
+  catch(ufEx) { throw ufEx(); }
+  std::size_t p = mant2.find_last_of('1')+1;
+  mant1.insert(p,"."); mant2.erase(p);
+  if(mant1.back()=='.') mant1.pushZeroBack(1);
+  sigMag res = div(mant1,mant2,exp);
+  return *this = sign+exp+res;
 }
 std::ostream& operator<<(std::ostream& os, const float16& p){
   std::string x(p);

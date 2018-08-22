@@ -10,6 +10,7 @@
 using namespace std;
 
 int main(){
-  float16 x = 23, y = 1000;
-  cout << x*y << endl;
+  float16 x = 91.34375, y = 2;
+  cout << x << endl << y << endl;
+  cout << x/y << endl;
 }

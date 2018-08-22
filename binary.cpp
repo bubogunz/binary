@@ -28,19 +28,12 @@ void binary::popZeroFront(){
 void binary::pushZeroBack(int length){
   int i = 0;
   while(i<length){
-    this->append('0');
+    this->append("0");
     i++;
   }
 }
-void binary::append(char c){
-  *this += c;
-}
-void binary::append(const char* c){
-  binary d(c);
-  *this += d;
-}
-void binary::append(std::string s){
-  *this += s;
+void binary::conj(){
+  front() = isNeg() ? '0' : '1';
 }
 void binary::complement(){
   unsigned int i = 0;
@@ -57,32 +50,6 @@ void binary::setMant(const binary& exp, binary& mant) const{
     else mant.insert(0,"11");
   }
 }
-/*binary& binary::operator--(){
-  bool carry = true; binary& x = *this;
-    for(int i=length()-1; i>=0 && carry; --i){
-      if(x[i] == '1'){
-        x[i] = '0';
-        carry = false;
-      }else
-        x[i] = '1';
-    }
-  if(carry) throw ofEx();
-  return *this;
-}
-binary& binary::operator++(){
-  auto it = end()-1;
-  bool carry = true;
-  while(it>=begin() && carry){
-    if((*it)=='0'){
-      (*it) = '1';
-      carry = false;
-    }
-    else (*it) = '0';
-    --it;
-  }
-  if(carry) throw ofEx();
-  return *this;
-}*/
 void binary::shiftR(){
   replace(begin()+1,end(),begin(),end()-1);
   front() = '0';
