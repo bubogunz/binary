@@ -146,29 +146,24 @@ sigMag float16::div(sigMag& mant1, sigMag& mant2, sigMag& exp) const{
   std::string::const_iterator cit = mant1.begin()+p;
   int i = 11;
   if(x<mant2)
-    res.append("0");
+    res.append("0.");
   else{
-    res.append("1");
+    res.append("1.");
     x = x - mant2;
     --i;
   }
+  ++cit;
   while(cit!=mant1.end() && i>0){
-    switch (*cit) {
-      case '.': res.append(".");
-	break;
-      default:
-	x.insert(x.end(),*cit);
-	mant2.insert(0,x.length()-mant2.length(),'0');
-	if(x<mant2){
-	  res.append("0");
-	  if(i<11) --i;
-	}
-	else{
-	  res.append("1");
-	  x = x - mant2;
-	  --i;
-	}
-	break;
+    x.insert(x.end(),*cit);
+    mant2.insert(0,x.length()-mant2.length(),'0');
+    if(x<mant2){
+      res.append("0");
+      --i;
+    }
+    else{
+      res.append("1");
+      x = x - mant2;
+      --i;
     }
     if(cit==mant1.end()-1 && i>0)
       mant1.append("0");
