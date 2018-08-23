@@ -1,18 +1,15 @@
 #include "twosComp.h"
 #include "opEx.h"
 #include <math.h>
-#include <iostream>
 using namespace std;
-int twosComp::minV = -32768;
-int twosComp::maxV = 32767;
-twosComp twosComp::minB = "1000000000000000";
-twosComp twosComp::maxB = "0111111111111111";
+int twosComp::min = -32768;
+int twosComp::max = 32767;
 twosComp twosComp::zero = "0000000000000000";
 twosComp::twosComp(std::string s): integer(s) { }
 twosComp::twosComp(const char* s): integer(s) { }
 twosComp::twosComp(int i): integer(toBin(i)) { }
 twosComp::twosComp(std::string::const_iterator first, std::string::const_iterator last):
-      integer(first,last) { }
+  integer(first,last) { }
 std::string twosComp::toBin(int x) const{
   twosComp res;
   switch(x){
@@ -20,16 +17,16 @@ std::string twosComp::toBin(int x) const{
       res = zero;
       break;
     default:
-      if(x<minV || x>maxV) throw ofEx();
+      if(x<min || x>max) throw ofEx();
       int i = zero.length()-1;
       if(x<0){
-        x += pow(2,i);
-        res.append("1");
+	x += pow(2,i);
+	res.append("1");
       }else res.append("0");
       i--;
       while(i>=0){
-        res.append(buildStr(x,i));
-        --i;
+	res.append(buildStr(x,i));
+	--i;
       }
       break;
   }
@@ -69,7 +66,7 @@ twosComp& twosComp::operator++(){
     if(x[i] == '0'){
       x[i] = '1';
       carry = false;
-     }else
+    }else
       x[i] = '0';
   }
   if(carry && x[0] == '1')
@@ -80,7 +77,7 @@ twosComp& twosComp::operator++(){
 }
 twosComp& twosComp::operator--(){
   bool carry = true; twosComp& x = *this;
-  if(x==minB) throw ofEx();
+  if(x=="1000000000000000") throw ofEx();
   for(int i=length()-1; i>=0 && carry; --i){
     if(x[i] == '1'){
       x[i] = '0';
@@ -89,7 +86,7 @@ twosComp& twosComp::operator--(){
       x[i] = '1';
     }
   }
- return *this;
+  return *this;
 }
 void twosComp::plus(twosComp& res, twosComp x) const{
   std::string::const_iterator cit1 = res.end()-1;
@@ -98,10 +95,10 @@ void twosComp::plus(twosComp& res, twosComp x) const{
   for(; cit1!=res.begin(); --cit1, --cit2){
     twosComp tmp(res.begin(),cit1+1);
     if((*cit2) == '1'){
-        try { ++tmp; }
-        catch(ofEx){ of = true; }
-        res.replace(res.begin(),res.begin()+tmp.length(),
-                  tmp.begin(),tmp.end());
+      try { ++tmp; }
+      catch(ofEx){ of = true; }
+      res.replace(res.begin(),res.begin()+tmp.length(),
+		  tmp.begin(),tmp.end());
     }
   }
   if(of) throw ofEx();
@@ -187,30 +184,33 @@ void twosComp::shiftL(){
 }
 twosComp& twosComp::operator/(const binary& r) {
   if(r==zero) throw zeroEx();
-  bool wasNeg = false;
+  if(*this==zero) return *this;
+  bool neg;
+  twosComp& b = *this;
+  twosComp y(r);
+  if(checkSign(isNeg(),y.isNeg())) // (+a)div(-b) or (-a)div(+b)
+    neg = true;
+  else neg = false;
   if(isNeg()){
-    wasNeg = true;
-    conj();
+    if(toVal()==min)
+      insert(begin(),'0');
+    else conj();
   }
-  std::string::const_iterator cit = begin();
-  while(*(cit+1)!='1' && cit!=end())
-    ++cit;
-  erase(begin(),cit);
-  twosComp y = r;
-  if(y.isNeg()) y.conj();
-  cit = y.begin();
-  while(*(cit+1)!='1' && cit!=y.end())
-    ++cit;
-  y.erase(y.begin(),cit);
-  twosComp x(begin(),begin()+y.length()), res;
-  if(x<y && length()<y.length()) return zero;
-  if(x<y) x.insert(x.end(),(*this)[x.length()]);
-  res.append("1");
-  x = x - y;
-  cit = begin()+y.length();
-  while(x.length()<length()){
+  if(y.isNeg()){
+    if(y.toVal()==min)
+      y.insert(y.begin(),'0');
+    else y.conj();
+  }
+  erase(0,find_first_of('1')-1);
+  y.erase(0,y.find_first_of('1')-1);
+  if(length()<y.length() || (length()==y.length() && b<y))
+    return *this = zero;
+  twosComp x = substr(0,y.length()-1);
+  twosComp res;
+  std::string::const_iterator cit = begin()+x.length();
+  while(cit!=end()){
     x.insert(x.end(),*cit);
-    y.insert(0, "0");
+    y.insert(0,x.length()-y.length(),'0');
     if(x<y) res.append("0");
     else{
       res.append("1");
@@ -218,16 +218,7 @@ twosComp& twosComp::operator/(const binary& r) {
     }
     ++cit;
   }
-  while(res.length()<zero.length()-1)
-    res.insert(0,"0");
-  if(checkSign(wasNeg,r.isNeg())){
-      res.insert(0,"0");
-      res.conj();
-  }
-  else res.insert(0,"0");
+  res.insert(0,16-res.length(),'0');
+  if(neg) res.conj();
   return *this = res;
-}
-std::ostream& operator<<(std::ostream& os, const twosComp& s){
-  std::string x(s);
-  return os << x << ' ' << s.toVal();
 }

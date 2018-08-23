@@ -10,7 +10,7 @@
 using namespace std;
 
 int main(){
-  float16 x = 98, y = 0.017;
+  twosComp x = -64, y = -2;
   cout << x << endl << y << endl;
   cout << x/y << endl;
 }

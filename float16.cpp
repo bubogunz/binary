@@ -1,7 +1,6 @@
 #include "float16.h"
 #include "opEx.h"
 #include <math.h>
-using namespace std;
 double float16::OF = 65504;
 double float16::UF = pow(2,-24);
 int float16::bias = 15;
@@ -139,6 +138,8 @@ sigMag float16::mul(const sigMag& mant1, const sigMag& mant2, sigMag& exp) const
 }
 sigMag float16::div(sigMag& mant1, sigMag& mant2, sigMag& exp) const{
   std::size_t p = mant2.find_last_of('1')+1;
+  mant1.insert(p,"."); mant2.erase(p);
+  if(mant1.back()=='.') mant1.pushZeroBack(1);
   sigMag x = mant1.substr(0,p);
   sigMag res;
   std::string::const_iterator cit = mant1.begin()+p;
@@ -167,7 +168,8 @@ sigMag float16::div(sigMag& mant1, sigMag& mant2, sigMag& exp) const{
       mant1.append("0");
     ++cit;
   }
-  if(exp!="000000" && res.front()!='1') norm(res,exp);
+  if(exp!="000000" && res.front()!='1')
+    norm(res,exp);
   exp.erase(0,1);
   res.erase(0,1);
   res.shiftL();
@@ -264,13 +266,6 @@ float16& float16::operator/(const binary& r){
   try{ exp = checkExpDiv(exp1,exp2); }
   catch(ofEx){ throw ofEx(); }
   catch(ufEx) { throw ufEx(); }
-  std::size_t p = mant2.find_last_of('1')+1;
-  mant1.insert(p,"."); mant2.erase(p);
-  if(mant1.back()=='.') mant1.pushZeroBack(1);
   sigMag res = div(mant1,mant2,exp);
   return *this = sign+exp+res;
-}
-std::ostream& operator<<(std::ostream& os, const float16& p){
-  std::string x(p);
-  return os << x << ' ' << p.toVal();
 }

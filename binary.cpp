@@ -4,7 +4,7 @@ binary::binary(std::string s): std::string(s) { }
 binary::binary(const char* s): std::string(s) { }
 binary::binary(std::string::const_iterator first, std::string::const_iterator last):
 	std::string(first,last) { }
-bool binary::checkSign(bool o1, bool o2) const{
+bool binary::checkSign(bool o1, bool o2){
   if(!o1){
     if(o2)
       return true;

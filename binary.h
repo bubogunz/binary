@@ -1,13 +1,12 @@
 #ifndef BINARY_H
 #define BINARY_H
-#include <iostream>
 #include <string>
 class binary: public std::string {
 public:
   binary(std::string ="");
   binary(const char*);
   binary(std::string::const_iterator,std::string::const_iterator);
-  bool checkSign(bool,bool) const;
+  static bool checkSign(bool,bool);
   bool isNeg() const;
   void popZeroFront();
   void pushZeroBack(int);

@@ -1,6 +1,5 @@
 #include "integer.h"
-#include "sigMag.h"
-#include "twosComp.h"
+
 #include <math.h>
 integer::integer(std::string s): binary(s) { }
 integer::integer(const char* s): binary(s) { }

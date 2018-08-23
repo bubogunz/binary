@@ -14,10 +14,10 @@ protected:
   virtual sigMag div(sigMag&, sigMag&, sigMag&) const =0;
   virtual sigMag checkExpMul(const sigMag, sigMag) const =0;
   virtual sigMag checkExpDiv(sigMag, const sigMag) const =0;
+  virtual double toVal() const =0;
 public:
   floatP(std::string ="");
   floatP(const char*);
-  virtual double toVal() const =0;
 };
 #endif // FLOATP_H
 
