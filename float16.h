@@ -19,8 +19,8 @@ public:
   float16(const char*);
   float16(double);
   float16(int);
-  float16(std::string::const_iterator,std::string::const_iterator);
-  double toVal() const;
+  //float16(std::string::const_iterator,std::string::const_iterator);
+  double toVal() const override;
   float16& operator+(const binary&) override;
   float16& operator-(const binary&) override;
   float16& operator*(const binary&) override;

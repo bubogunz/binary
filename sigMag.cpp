@@ -1,10 +1,8 @@
 #include "sigMag.h"
 #include "opEx.h"
 #include <math.h>
-int sigMag::minV = -32767;
-int sigMag::maxV = 32767;
-sigMag sigMag::minB = "1111111111111111";
-sigMag sigMag::maxB = "0111111111111111";
+int sigMag::min = -32767;
+int sigMag::max = 32767;
 sigMag sigMag::zero = "0000000000000000";
 sigMag::sigMag(std::string s): integer(s) { }
 sigMag::sigMag(const char* s): integer(s) { }
@@ -18,7 +16,7 @@ std::string sigMag::toBin(int x) const{ // O(1)
       res = zero;
       break;
     default:
-      if(x<minV || x>maxV) throw ofEx();
+      if(x<min || x>max) throw ofEx();
       if(x<0){
         res.append("1");
         x = x*(-1);
@@ -117,12 +115,12 @@ sigMag& sigMag::operator++(){
   return *this;
 }
 void sigMag::plus(sigMag& res, sigMag x) const{
-  auto it1 = res.end()-1;
-  auto it2 = x.end()-1;
+  std::string::const_iterator cit1 = res.end()-1;
+  std::string::const_iterator cit2 = x.end()-1;
   bool of = false;
-  for(; it1!=res.begin(); --it1, --it2){
-    sigMag tmp(res.begin(),it1+1);
-    if((*it2) == '1'){
+  for(; cit1!=res.begin(); --cit1, --cit2){
+    sigMag tmp(res.begin(),cit1+1);
+    if((*cit2) == '1'){
         try { ++tmp; }
         catch(ofEx){ of = true; }
         res.replace(res.begin(),res.begin()+tmp.length(),
@@ -220,13 +218,13 @@ sigMag& sigMag::operator*(const binary& r) {
   if((*this)==zero || r==zero) return zero;
   sigMag res = zero, op = r; op[0] = '0';
   sigMag mant(begin(),end()); mant[0] = '0';
-  auto it = op.end()-1;
-  for(int i=0; it>=op.begin(); --it,++i){
+  std::string::const_iterator cit = op.end()-1;
+  for(int i=0; cit>=op.begin(); --cit,++i){
     std::string b;
-    if((*it)=='1'){
+    if((*cit)=='1'){
       b.insert(0,i,'0');
       b.insert(0,mant);
-      auto x = b.begin()+(b.length()-(length()));
+      std::string::iterator x = b.begin()+(b.length()-(length()));
       std::string checkOf(b.begin(),x);
       if(checkOf.find('1')!=std::string::npos)
         throw ofEx();
@@ -245,31 +243,31 @@ sigMag& sigMag::operator/(const binary& r){
   sigMag& b = *this;
   char sign = checkSign(isNeg(),r.isNeg()) ? '1' : '0';
   if(isNeg()) front() = '0';
-  auto it=begin();
-  while(*(it+1)!='1'/* && it!=end()*/)
-    ++it;
-  erase(begin(),it);
+  std::string::const_iterator cit = begin();
+  while(*(cit+1)!='1'/* && it!=end()*/)
+    ++cit;
+  erase(begin(),cit);
   sigMag y = r;
   y.front() = '0';
-  it = y.begin();
-  while(*(it+1)!='1'/* && it!=y.end()*/)
-    ++it;
-  y.erase(y.begin(),it);
+  cit = y.begin();
+  while(*(cit+1)!='1'/* && it!=y.end()*/)
+    ++cit;
+  y.erase(y.begin(),cit);
   sigMag x = substr(0,y.length()-1), res;
   if(x<y && length()<y.length()) return zero;
   if(x<y) x.insert(x.end(),b[x.length()]);
   res.append("1");
   x = x - y;
-  it = begin()+y.length();
+  cit = begin()+y.length();
   while(x.length()<length()){
     y.insert(0,"0");
-    x.insert(x.end(),*it);
+    x.insert(x.end(),*cit);
     if(x<y) res.append("0");
     else{
       res.append("1");
       x = x - y;
     }
-    ++it;
+    ++cit;
   }
   res.insert(0,15-res.length(),'0');
   return b = sign+res;

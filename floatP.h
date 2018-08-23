@@ -16,7 +16,6 @@ protected:
   virtual sigMag checkExpDiv(sigMag, const sigMag) const =0;
 public:
   floatP(std::string ="");
-  floatP(std::string::const_iterator,std::string::const_iterator);
   floatP(const char*);
   virtual double toVal() const =0;
 };

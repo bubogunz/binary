@@ -8,8 +8,6 @@ int float16::bias = 15;
 float16 float16::zero = "0000000000000000";
 float16::float16(std::string b): floatP(b){ }
 float16::float16(const char* s): floatP(s){ }
-float16::float16(std::string::const_iterator first,std::string::const_iterator last):
-  floatP(first, last) { }
 float16::float16(double d): floatP(toBin(d)) { }
 float16::float16(int d): floatP(toBin(d)) { }
 sigMag float16::checkExpMul(const sigMag exp1, sigMag exp2) const{

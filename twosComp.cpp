@@ -92,12 +92,12 @@ twosComp& twosComp::operator--(){
  return *this;
 }
 void twosComp::plus(twosComp& res, twosComp x) const{
-  auto it1 = res.end()-1;
-  auto it2 = x.end()-1;
+  std::string::const_iterator cit1 = res.end()-1;
+  std::string::const_iterator cit2 = x.end()-1;
   bool of = false;
-  for(; it1!=res.begin(); --it1, --it2){
-    twosComp tmp(res.begin(),it1+1);
-    if((*it2) == '1'){
+  for(; cit1!=res.begin(); --cit1, --cit2){
+    twosComp tmp(res.begin(),cit1+1);
+    if((*cit2) == '1'){
         try { ++tmp; }
         catch(ofEx){ of = true; }
         res.replace(res.begin(),res.begin()+tmp.length(),
@@ -192,31 +192,31 @@ twosComp& twosComp::operator/(const binary& r) {
     wasNeg = true;
     conj();
   }
-  auto it=begin();
-  while(*(it+1)!='1' && it!=end())
-    ++it;
-  erase(begin(),it);
+  std::string::const_iterator cit = begin();
+  while(*(cit+1)!='1' && cit!=end())
+    ++cit;
+  erase(begin(),cit);
   twosComp y = r;
   if(y.isNeg()) y.conj();
-  it = y.begin();
-  while(*(it+1)!='1' && it!=y.end())
-    ++it;
-  y.erase(y.begin(),it);
+  cit = y.begin();
+  while(*(cit+1)!='1' && cit!=y.end())
+    ++cit;
+  y.erase(y.begin(),cit);
   twosComp x(begin(),begin()+y.length()), res;
   if(x<y && length()<y.length()) return zero;
   if(x<y) x.insert(x.end(),(*this)[x.length()]);
   res.append("1");
   x = x - y;
-  it = begin()+y.length();
+  cit = begin()+y.length();
   while(x.length()<length()){
-    x.insert(x.end(),*it);
+    x.insert(x.end(),*cit);
     y.insert(0, "0");
     if(x<y) res.append("0");
     else{
       res.append("1");
       x = x - y;
     }
-    ++it;
+    ++cit;
   }
   while(res.length()<zero.length()-1)
     res.insert(0,"0");

@@ -18,9 +18,9 @@ public:
   twosComp(const char*);
   twosComp(int);
   twosComp(std::string::const_iterator, std::string::const_iterator);
-  int toVal() const;
-  twosComp& operator++();
-  twosComp& operator--();
+  int toVal() const override;
+  twosComp& operator++() override;
+  twosComp& operator--() override;
   twosComp& operator+(const binary&) override;
   twosComp& operator-(const binary&) override;
   twosComp& operator*(const binary&) override; //Booth's algorithm for 2's complement multiplication

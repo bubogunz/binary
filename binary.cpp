@@ -2,9 +2,8 @@
 #include "opEx.h"
 binary::binary(std::string s): std::string(s) { }
 binary::binary(const char* s): std::string(s) { }
-//binary::binary(const binary& s): std::string(s) { }
 binary::binary(std::string::const_iterator first, std::string::const_iterator last):
-        std::string(first,last) { }
+	std::string(first,last) { }
 bool binary::checkSign(bool o1, bool o2) const{
   if(!o1){
     if(o2)
@@ -22,8 +21,8 @@ void binary::popZeroFront(){
   int i = 0;
   while((*this)[i] == '0')
     ++i;
-  auto it = begin()+i;
-  erase(begin(),it);
+  std::string::const_iterator cit = begin()+i;
+  erase(begin(),cit);
 }
 void binary::pushZeroBack(int length){
   int i = 0;

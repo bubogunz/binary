@@ -1,12 +1,10 @@
 #ifndef SIGMAG_H
 #define SIGMAG_H
 #include "integer.h"
-#include <string> //include Qstring e sul .pro QT += core
+#include <string>
 class sigMag : public integer { //[-32767, +32767]
-  static int minV;
-  static int maxV;
-  static sigMag minB;
-  static sigMag maxB;
+  static int min;
+  static int max;
   static sigMag zero;
   virtual std::string toBin(int) const override;
   void twosComp(sigMag&) const;
@@ -17,13 +15,13 @@ public:
   sigMag(const char*);
   sigMag(int);
   sigMag(std::string::const_iterator, std::string::const_iterator);
-  int toVal() const;
+  int toVal() const override;
   bool operator<(const sigMag& r) const;
   bool operator>(const sigMag& r) const;
   bool operator<=(const sigMag& r) const;
   bool operator>=(const sigMag& r) const;
-  sigMag& operator++();
-  sigMag& operator--();
+  sigMag& operator++() override;
+  sigMag& operator--() override;
   sigMag& operator+(const binary&) override;
   sigMag& operator-(const binary&) override;
   sigMag& operator*(const binary&) override;

@@ -3,8 +3,8 @@
 #include <math.h>
 floatP::floatP(std::string s): binary(s) { }
 floatP::floatP(const char* s): binary(s) { }
-floatP::floatP(std::string::const_iterator first,std::string::const_iterator last):
-  binary(first, last) { }
+//floatP::floatP(std::string::const_iterator first,std::string::const_iterator last):
+  //binary(first, last) { }
 std::string floatP::buildStr(double& x, int j){
   double y = pow(2,j);
   if(x>=y){
